@@ -19,34 +19,108 @@ This project focuses on **Ant Colony-Based Algorithms** and their application to
 - CSS3
 - JavaScript
 
-## Installation & Setup
-[Installation instructions - to be updated]
+## Flowchart
+START
+  ↓
+Load Web Page
+  ↓
+Display Intro Page
+  ↓
+[User clicks "Launch Simulation"?]
+        ↓ Yes
+Hide Intro Page
+Show Simulation UI
+  ↓
+Initialize Grid & Parameters
+  ↓
+Wait for User Action
+User clicks "Start Simulation"
+  ↓
+Is Simulation Already Running?
+  ├─ Yes → Pause Simulation
+  └─ No
+        ↓
+Initialize Grid
+Initialize Pheromone Matrix
+Place Virus Files
+Create Ant Agents
+Set Start Time
+Iteration = 0
+  ↓
+Start Simulation Loop
+SIMULATION LOOP (requestAnimationFrame)
+  ↓
+For each Ant
+  ↓
+Is Ant Alive?
+  ├─ No → Skip Ant
+  └─ Yes
+        ↓
+Find Neighbor Cells
+        ↓
+Calculate Probabilities
+(Pheromone + Distance Heuristic)
+        ↓
+Select Next Cell (Roulette Wheel)
+        ↓
+Move Ant
+        ↓
+Add Cell to Path
+        ↓
+Check for Virus
+        ├─ Virus Found?
+        │     ├─ Yes
+        │     │     ↓
+        │     │ Mark Virus Found
+        │     │ Update Best Path
+        │     │ Deposit Pheromone
+        │     └─ No
+        ↓
+Check Path Length Limit
+        ↓
+Continue
+Are All Ants Dead?
+  ├─ No → Continue Simulation Loop
+  └─ Yes
+        ↓
+Iteration++
+Evaporate Pheromones
+        ↓
+Have All Viruses Been Found?
+        ├─ No → Create New Ants
+        │         ↓
+        │      Continue Loop
+        └─ Yes
+              ↓
+Have Enough Iterations Passed?
+        ├─ No → Create New Ants
+        │         ↓
+        │      Continue Loop
+        └─ Yes
+              ↓
+Stop Simulation
+Display Results
+Simulation Complete
+  ↓
+Highlight Optimized Paths
+  ↓
+Display:
+- Shortest Path Length
+- Virus-wise Best Paths
+- Time Elapsed
+- Iterations Count
+  ↓
+Wait for User:
+[Reset] or [Change Parameters]
+User Clicks Reset OR Changes Grid Size
+  ↓
+Stop Simulation
+  ↓
+Clear Ants
+Clear Pheromones
+Clear Paths
+  ↓
+Reinitialize Grid
+  ↓
+Ready to Start Again
 
-## Usage
-[Usage instructions - to be updated]
-
-## Algorithm Details
-### Ant Colony Optimization
-[Detailed explanation - to be updated]
-
-### Application to Antivirus
-[How ACO is applied to antivirus software - to be updated]
-
-## Results & Findings
-[Research results and findings - to be updated]
-
-## References
-[Add references here - to be updated]
-
-## Authors
-Group 4 - Element of Biology Project
-
-## License
-[Add license information - to be updated]
-
-## Contact
-[Add contact information - to be updated]
-
----
-
-**Note**: This README is a template. Please update all sections with relevant information about the project.
