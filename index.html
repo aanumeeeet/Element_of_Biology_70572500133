@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ant Colony-Based Algorithms: Antivirus Software Optimization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .canvas-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .controls-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        .value-display {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 15px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-start {
+            background: #10b981;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn-start:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-reset {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-speed {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-speed:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .legend-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .status-indicator {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .status-running {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-complete {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Intro Page Styles */
+        .intro-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .intro-container {
+            max-width: 900px;
+            background: white;
+            border-radius: 30px;
+            padding: 60px 50px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .intro-title {
+            font-size: 2.8em;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .intro-subtitle {
+            font-size: 1.3em;
+            color: #667eea;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .intro-description {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        .intro-description p {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .team-section {
+            margin-bottom: 40px;
+        }
+
+        .team-section h2 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .team-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .team-member {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .member-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .member-role {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .btn-launch {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.4em;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-launch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .btn-launch:active {
+            transform: translateY(-1px);
+        }
+
+        .intro-footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .intro-footer p {
+            color: #999;
+            font-size: 0.95em;
+        }
+
+        @media (max-width: 768px) {
+            .intro-container {
+                padding: 40px 30px;
+            }
+
+            .intro-title {
+                font-size: 2em;
+            }
+
+            .intro-subtitle {
+                font-size: 1.1em;
+            }
+
+            .team-members {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-launch {
+                padding: 18px 40px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro Page -->
+    <div class="intro-page" id="introPage">
+        <div class="intro-container">
+            <h1 class="intro-title">🐜 Ant Colony-Based Algorithms:<br>Antivirus Software Optimization</h1>
+            
+            <p class="intro-subtitle">
+                Visualizing how swarm intelligence finds the fastest path to detect cyber threats using Ant Colony Optimization.
+            </p>
+            
+            <div class="intro-description">
+                <p>
+                    This interactive simulation demonstrates how virtual ants explore a digital file system, 
+                    leave pheromone trails, and collectively discover the shortest path to virus-infected files — 
+                    improving antivirus scanning efficiency.
+                </p>
+            </div>
+            
+            <div class="team-section">
+                <h2>👥 Team Members</h2>
+                <div class="team-members" id="teamMembers">
+                    <div class="team-member">
+                        <div class="member-name">Anumeet Prakash</div>
+                        <div class="member-role">ID: 70572500133</div>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-name">Atmanand Karibasweshwar Patil</div>
+                        <div class="member-role">ID: 70572500134</div>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-name">Soham Pawar</div>
+                        <div class="member-role">ID: 70572500136</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-launch" id="launchBtn">🚀 Launch Simulation</button>
+            
+            <div class="intro-footer">
+                <p>Powered by Ant Colony Optimization Algorithm</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Simulation -->
+    <div class="container" id="mainSimulation" style="display: none;">
+        <h1>🐜 Ant Colony-Based Algorithms: Antivirus Software Optimization</h1>
+        <p class="subtitle">Interactive Simulation using ACO Algorithm for Optimal Virus Detection Paths</p>
+
+        <div class="main-content">
+            <div class="canvas-container">
+                <canvas id="simulationCanvas" width="800" height="800"></canvas>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #fbbf24;">📁</div>
+                        <span>Normal Files</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #ef4444;">🦠</div>
+                        <span>Virus Files</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #3b82f6;">🏠</div>
+                        <span>Scanner Start</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #10b981; opacity: 0.5;">━</div>
+                        <span>Pheromone Trail</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #10b981;">━</div>
+                        <span>Optimized Paths</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: #000;">🐜</div>
+                        <span>Scanning Ants</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-panel">
+                <h2 style="margin-bottom: 20px; font-size: 1.4em;">⚙️ Simulation Controls</h2>
+
+                <div class="button-group">
+                    <button class="btn-start" id="startBtn">▶ Start Simulation</button>
+                    <button class="btn-reset" id="resetBtn">↻ Reset</button>
+                    <button class="btn-speed" id="fastForwardBtn">⏩ Fast Forward</button>
+                </div>
+
+                <div class="status-indicator" id="statusIndicator">
+                    Ready to start
+                </div>
+
+                <div style="height: 1px; background: rgba(255,255,255,0.3); margin: 20px 0;"></div>
+
+                <div class="control-group">
+                    <label>Number of Ants: <span class="value-display" id="antCountDisplay">10</span></label>
+                    <input type="range" id="antCount" min="5" max="50" value="10" step="5">
+                </div>
+
+                <div class="control-group">
+                    <label>Virus Files: <span class="value-display" id="virusCountDisplay">3</span></label>
+                    <input type="range" id="virusCount" min="1" max="8" value="3" step="1">
+                </div>
+
+                <div class="control-group">
+                    <label>Grid Size: <span class="value-display" id="gridSizeDisplay">20x20</span></label>
+                    <input type="range" id="gridSize" min="10" max="40" value="20" step="5">
+                    <div style="font-size: 0.75em; opacity: 0.8; margin-top: 4px;">
+                        Smaller = faster, Larger = more complex paths
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Simulation Speed: <span class="value-display" id="speedDisplay">1x</span></label>
+                    <input type="range" id="speed" min="1" max="10" value="1" step="1">
+                </div>
+
+                <div class="control-group">
+                    <label>Pheromone Evaporation Rate: <span class="value-display" id="evaporationDisplay">0.1</span></label>
+                    <input type="range" id="evaporation" min="0.05" max="0.3" value="0.1" step="0.05">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="showPheromones" checked>
+                    <label for="showPheromones">Show Pheromone Trails</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="showAnts" checked>
+                    <label for="showAnts">Show Scanning Ants</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-panel">
+            <h3 style="margin-bottom: 15px; color: #333;">📊 Simulation Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Viruses Found</div>
+                    <div class="stat-value" id="virusesFound">0 / 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Best Path Length</div>
+                    <div class="stat-value" id="bestPathLength">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Iterations</div>
+                    <div class="stat-value" id="iterations">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Ants</div>
+                    <div class="stat-value" id="activeAnts">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg Path Quality</div>
+                    <div class="stat-value" id="avgQuality">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Time Elapsed</div>
+                    <div class="stat-value" id="timeElapsed">0.0s</div>
+                </div>
+            </div>
+            
+            <div id="virusPathDetails" style="margin-top: 20px;">
+                <h4 style="color: #333; margin-bottom: 10px;">🎯 Individual Virus Detection Paths</h4>
+                <div id="pathDetailsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvas setup
+        const canvas = document.getElementById('simulationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Simulation parameters
+        let GRID_SIZE = 20;
+        let CELL_SIZE = canvas.width / GRID_SIZE;
+        let NUM_ANTS = 10;
+        let NUM_VIRUSES = 3;
+        let EVAPORATION_RATE = 0.1;
+        let ALPHA = 1; // Pheromone importance
+        let BETA = 2;  // Distance importance
+        let Q = 100;   // Pheromone deposit constant
+        
+        // Simulation state
+        let grid = [];
+        let pheromones = [];
+        let ants = [];
+        let viruses = [];
+        let startNode = null;
+        let isRunning = false;
+        let animationId = null;
+        let iteration = 0;
+        let bestPath = null;
+        let bestPathLength = Infinity;
+        let virusesFoundCount = 0;
+        let virusPaths = new Map(); // Store best path to each virus
+        let showPheromones = true;
+        let showAnts = true;
+        let startTime = null;
+        let speedMultiplier = 1;
+
+        // Initialize grid
+        function initializeGrid() {
+            grid = [];
+            pheromones = [];
+            
+            for (let i = 0; i < GRID_SIZE; i++) {
+                grid[i] = [];
+                pheromones[i] = [];
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    grid[i][j] = { type: 'file', virus: false };
+                    pheromones[i][j] = 0.1; // Initial pheromone level
+                }
+            }
+
+            // Set start node (center)
+            const center = Math.floor(GRID_SIZE / 2);
+            startNode = { x: center, y: center };
+            grid[center][center].type = 'start';
+
+            // Place viruses randomly
+            viruses = [];
+            virusesFoundCount = 0;
+            virusPaths.clear();
+            let placed = 0;
+            while (placed < NUM_VIRUSES) {
+                const x = Math.floor(Math.random() * GRID_SIZE);
+                const y = Math.floor(Math.random() * GRID_SIZE);
+                
+                if (!grid[x][y].virus && grid[x][y].type !== 'start' && 
+                    (Math.abs(x - center) > 2 || Math.abs(y - center) > 2)) {
+                    grid[x][y].virus = true;
+                    const virusId = `virus_${placed}`;
+                    grid[x][y].virusId = virusId;
+                    viruses.push({ x, y, found: false, id: virusId });
+                    placed++;
+                }
+            }
+        }
+
+        // Ant class
+        class Ant {
+            constructor() {
+                this.x = startNode.x;
+                this.y = startNode.y;
+                this.path = [{ x: this.x, y: this.y }];
+                this.visitedViruses = new Set();
+                this.alive = true;
+                this.stuckCounter = 0;
+                this.foundVirusThisLife = false;
+            }
+
+            move() {
+                if (!this.alive) return;
+
+                const neighbors = this.getNeighbors();
+                if (neighbors.length === 0) {
+                    this.alive = false;
+                    return;
+                }
+
+                const next = this.selectNext(neighbors);
+                this.x = next.x;
+                this.y = next.y;
+                this.path.push({ x: this.x, y: this.y });
+
+                // Check if found virus
+                if (grid[this.x][this.y].virus) {
+                    const virusIndex = viruses.findIndex(v => v.x === this.x && v.y === this.y);
+                    if (virusIndex !== -1) {
+                        const virus = viruses[virusIndex];
+                        const virusKey = `${virus.x},${virus.y}`;
+                        
+                        // If this ant hasn't visited this virus yet
+                        if (!this.visitedViruses.has(virusKey)) {
+                            this.visitedViruses.add(virusKey);
+                            this.foundVirusThisLife = true;
+                            
+                            // Always mark virus as found globally
+                            if (!virus.found) {
+                                virus.found = true;
+                                virusesFoundCount++;
+                            }
+                            
+                            // Store or update best path for this specific virus
+                            const virusId = virus.id;
+                            if (!virusPaths.has(virusId) || this.path.length < virusPaths.get(virusId).length) {
+                                virusPaths.set(virusId, {
+                                    path: [...this.path],
+                                    length: this.path.length,
+                                    virusIndex: virusIndex
+                                });
+                            }
+                            
+                            if (this.path.length < bestPathLength) {
+                                bestPathLength = this.path.length;
+                                bestPath = [...this.path];
+                            }
+                            
+                            // Deposit pheromone for this successful path
+                            this.depositPheromone();
+                        }
+                    }
+                }
+
+                // Stop if path is too long or visited all viruses
+                if (this.path.length > GRID_SIZE * 3 || this.visitedViruses.size >= NUM_VIRUSES) {
+                    this.alive = false;
+                }
+            }
+
+            getNeighbors() {
+                const neighbors = [];
+                const directions = [
+                    { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
+                    { dx: 0, dy: -1 }, { dx: 0, dy: 1 },
+                    { dx: -1, dy: -1 }, { dx: -1, dy: 1 },
+                    { dx: 1, dy: -1 }, { dx: 1, dy: 1 }
+                ];
+
+                for (const dir of directions) {
+                    const nx = this.x + dir.dx;
+                    const ny = this.y + dir.dy;
+
+                    if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+                        // Allow revisiting but avoid immediate backtracking (last 3 positions)
+                        const recentlyVisited = this.path.slice(-3).some(p => p.x === nx && p.y === ny);
+                        if (!recentlyVisited) {
+                            neighbors.push({ x: nx, y: ny });
+                        }
+                    }
+                }
+
+                // If stuck (no neighbors), allow any adjacent cell
+                if (neighbors.length === 0) {
+                    for (const dir of directions) {
+                        const nx = this.x + dir.dx;
+                        const ny = this.y + dir.dy;
+                        if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+                            neighbors.push({ x: nx, y: ny });
+                        }
+                    }
+                }
+
+                return neighbors;
+            }
+
+            selectNext(neighbors) {
+                // Calculate probabilities based on pheromone and distance to nearest unvisited virus
+                const probabilities = neighbors.map(n => {
+                    const pheromone = Math.pow(pheromones[n.x][n.y], ALPHA);
+                    
+                    // Find nearest unvisited virus
+                    let nearestVirus = null;
+                    let minDist = Infinity;
+                    
+                    for (const virus of viruses) {
+                        const virusKey = `${virus.x},${virus.y}`;
+                        if (!this.visitedViruses.has(virusKey)) {
+                            const dist = Math.sqrt(
+                                Math.pow(n.x - virus.x, 2) + 
+                                Math.pow(n.y - virus.y, 2)
+                            );
+                            if (dist < minDist) {
+                                minDist = dist;
+                                nearestVirus = virus;
+                            }
+                        }
+                    }
+                    
+                    const distance = nearestVirus ? minDist : 1;
+                    const heuristic = Math.pow(1 / (distance + 0.1), BETA);
+                    
+                    return pheromone * heuristic;
+                });
+
+                const sum = probabilities.reduce((a, b) => a + b, 0);
+                if (sum === 0) return neighbors[Math.floor(Math.random() * neighbors.length)];
+
+                const normalizedProbs = probabilities.map(p => p / sum);
+
+                // Roulette wheel selection
+                const rand = Math.random();
+                let cumulative = 0;
+                for (let i = 0; i < neighbors.length; i++) {
+                    cumulative += normalizedProbs[i];
+                    if (rand <= cumulative) {
+                        return neighbors[i];
+                    }
+                }
+
+                return neighbors[neighbors.length - 1];
+            }
+
+            findNearestUnfoundVirus() {
+                let nearest = null;
+                let minDist = Infinity;
+
+                for (const virus of viruses) {
+                    const virusKey = `${virus.x},${virus.y}`;
+                    if (!this.visitedViruses.has(virusKey)) {
+                        const dist = Math.sqrt(
+                            Math.pow(this.x - virus.x, 2) + 
+                            Math.pow(this.y - virus.y, 2)
+                        );
+                        if (dist < minDist) {
+                            minDist = dist;
+                            nearest = virus;
+                        }
+                    }
+                }
+
+                return nearest;
+            }
+
+            depositPheromone() {
+                const amount = Q / this.path.length;
+                for (const pos of this.path) {
+                    pheromones[pos.x][pos.y] += amount;
+                }
+            }
+        }
+
+        // Evaporate pheromones
+        function evaporatePheromones() {
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    pheromones[i][j] *= (1 - EVAPORATION_RATE);
+                    pheromones[i][j] = Math.max(pheromones[i][j], 0.1);
+                }
+            }
+        }
+
+        // Draw grid
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw pheromone trails
+            if (showPheromones) {
+                for (let i = 0; i < GRID_SIZE; i++) {
+                    for (let j = 0; j < GRID_SIZE; j++) {
+                        const intensity = Math.min(pheromones[i][j] / 10, 1);
+                        ctx.fillStyle = `rgba(16, 185, 129, ${intensity * 0.3})`;
+                        ctx.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    }
+                }
+            }
+
+            // Draw grid cells
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    ctx.strokeStyle = '#e5e7eb';
+                    ctx.strokeRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                    const centerX = j * CELL_SIZE + CELL_SIZE / 2;
+                    const centerY = i * CELL_SIZE + CELL_SIZE / 2;
+
+                    if (grid[i][j].type === 'start') {
+                        ctx.fillStyle = '#3b82f6';
+                        ctx.beginPath();
+                        ctx.arc(centerX, centerY, CELL_SIZE * 0.35, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = 'white';
+                        ctx.font = `${CELL_SIZE * 0.5}px Arial`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('🏠', centerX, centerY);
+                    } else if (grid[i][j].virus) {
+                        const found = viruses.find(v => v.x === i && v.y === j)?.found;
+                        
+                        // Draw virus circle
+                        ctx.fillStyle = found ? '#10b981' : '#ef4444';
+                        ctx.beginPath();
+                        ctx.arc(centerX, centerY, CELL_SIZE * 0.35, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Draw icon
+                        ctx.fillStyle = 'white';
+                        ctx.font = `${CELL_SIZE * 0.5}px Arial`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(found ? '✓' : '🦠', centerX, centerY);
+                        
+                        // Add glow effect for found viruses
+                        if (found) {
+                            ctx.shadowColor = '#10b981';
+                            ctx.shadowBlur = 10;
+                            ctx.beginPath();
+                            ctx.arc(centerX, centerY, CELL_SIZE * 0.4, 0, Math.PI * 2);
+                            ctx.strokeStyle = '#10b981';
+                            ctx.lineWidth = 2;
+                            ctx.stroke();
+                            ctx.shadowBlur = 0;
+                        }
+                    } else {
+                        ctx.fillStyle = '#fbbf24';
+                        ctx.fillRect(j * CELL_SIZE + CELL_SIZE * 0.3, i * CELL_SIZE + CELL_SIZE * 0.3, 
+                                   CELL_SIZE * 0.4, CELL_SIZE * 0.4);
+                    }
+                }
+            }
+
+            // Draw best path if found
+            if (bestPath && bestPath.length > 0) {
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                for (let i = 0; i < bestPath.length; i++) {
+                    const x = bestPath[i].y * CELL_SIZE + CELL_SIZE / 2;
+                    const y = bestPath[i].x * CELL_SIZE + CELL_SIZE / 2;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.lineWidth = 1;
+            }
+
+            // Draw individual shortest paths to each virus with green color
+            const pathColors = ['#10b981', '#059669', '#34d399', '#6ee7b7', '#a7f3d0', '#10b981', '#047857', '#065f46'];
+            let colorIndex = 0;
+            
+            for (const [virusId, pathData] of virusPaths.entries()) {
+                const color = pathColors[colorIndex % pathColors.length];
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 4;
+                ctx.shadowColor = color;
+                ctx.shadowBlur = 8;
+                
+                ctx.beginPath();
+                for (let i = 0; i < pathData.path.length; i++) {
+                    const x = pathData.path[i].y * CELL_SIZE + CELL_SIZE / 2;
+                    const y = pathData.path[i].x * CELL_SIZE + CELL_SIZE / 2;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                // Draw path length label at virus location
+                const virus = viruses[pathData.virusIndex];
+                const labelX = virus.y * CELL_SIZE + CELL_SIZE / 2;
+                const labelY = virus.x * CELL_SIZE + CELL_SIZE * 0.15;
+                
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = color;
+                ctx.font = `bold ${CELL_SIZE * 0.25}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${pathData.length}`, labelX, labelY);
+                
+                colorIndex++;
+            }
+            
+            ctx.shadowBlur = 0;
+            ctx.lineWidth = 1;
+
+            // Draw ants - conditional based on showAnts toggle
+            if (showAnts) {
+                for (const ant of ants) {
+                    if (ant.alive) {
+                        const x = ant.y * CELL_SIZE + CELL_SIZE / 2;
+                        const y = ant.x * CELL_SIZE + CELL_SIZE / 2;
+                        
+                        ctx.fillStyle = '#1f2937';
+                        ctx.beginPath();
+                        ctx.arc(x, y, CELL_SIZE * 0.2, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Draw ant path
+                        if (ant.path.length > 1) {
+                            ctx.strokeStyle = 'rgba(31, 41, 55, 0.3)';
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            for (let i = 0; i < ant.path.length; i++) {
+                                const px = ant.path[i].y * CELL_SIZE + CELL_SIZE / 2;
+                                const py = ant.path[i].x * CELL_SIZE + CELL_SIZE / 2;
+                                if (i === 0) ctx.moveTo(px, py);
+                                else ctx.lineTo(px, py);
+                            }
+                            ctx.stroke();
+                            ctx.lineWidth = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('virusesFound').textContent = `${virusesFoundCount} / ${NUM_VIRUSES}`;
+            document.getElementById('bestPathLength').textContent = 
+                bestPathLength === Infinity ? '-' : bestPathLength;
+            document.getElementById('iterations').textContent = iteration;
+            document.getElementById('activeAnts').textContent = 
+                ants.filter(a => a.alive).length;
+            
+            const avgPheromone = pheromones.flat().reduce((a, b) => a + b, 0) / (GRID_SIZE * GRID_SIZE);
+            const quality = Math.min((avgPheromone / 5) * 100, 100);
+            document.getElementById('avgQuality').textContent = `${quality.toFixed(0)}%`;
+            
+            if (startTime) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                document.getElementById('timeElapsed').textContent = `${elapsed.toFixed(1)}s`;
+            }
+
+            // Update individual virus path details
+            const pathDetailsList = document.getElementById('pathDetailsList');
+            pathDetailsList.innerHTML = '';
+            
+            const pathColors = ['#10b981', '#059669', '#34d399', '#6ee7b7', '#a7f3d0', '#10b981', '#047857', '#065f46'];
+            let colorIndex = 0;
+            
+            for (const [virusId, pathData] of virusPaths.entries()) {
+                const virus = viruses[pathData.virusIndex];
+                const color = pathColors[colorIndex % pathColors.length];
+                
+                const pathCard = document.createElement('div');
+                pathCard.style.cssText = `
+                    background: white;
+                    padding: 12px;
+                    border-radius: 8px;
+                    border-left: 4px solid ${color};
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                `;
+                
+                pathCard.innerHTML = `
+                    <div style="font-size: 0.85em; color: #666; margin-bottom: 4px;">
+                        Virus #${colorIndex + 1} (${virus.x}, ${virus.y})
+                    </div>
+                    <div style="font-size: 1.5em; font-weight: bold; color: ${color};">
+                        ${pathData.length} steps
+                    </div>
+                    <div style="font-size: 0.75em; color: #999; margin-top: 4px;">
+                        ${pathData.length === bestPathLength ? '🏆 Shortest!' : ''}
+                    </div>
+                `;
+                
+                pathDetailsList.appendChild(pathCard);
+                colorIndex++;
+            }
+        }
+
+        // Main simulation loop
+        function simulate() {
+            if (!isRunning) return;
+
+            for (let speed = 0; speed < speedMultiplier; speed++) {
+                // Move all ants
+                for (const ant of ants) {
+                    if (ant.alive) {
+                        ant.move();
+                    }
+                }
+
+                // Check if all ants are done
+                if (ants.every(a => !a.alive)) {
+                    iteration++;
+                    evaporatePheromones();
+                    
+                    // Check if we've found all viruses and enough iterations passed
+                    const allVirusesFound = virusesFoundCount >= NUM_VIRUSES;
+                    const enoughIterations = iteration > 30; // At least 30 iterations for path optimization
+                    const allVirusesHavePaths = virusPaths.size >= NUM_VIRUSES;
+                    
+                    if (allVirusesFound && enoughIterations && allVirusesHavePaths) {
+                        stopSimulation();
+                        document.getElementById('statusIndicator').textContent = 
+                            `✅ Optimization Complete - ${virusPaths.size} Shortest Paths Found!`;
+                        document.getElementById('statusIndicator').className = 
+                            'status-indicator status-complete';
+                        return;
+                    }
+                    
+                    // Create new generation of ants to continue exploring
+                    ants = [];
+                    for (let i = 0; i < NUM_ANTS; i++) {
+                        ants.push(new Ant());
+                    }
+                }
+            }
+
+            draw();
+            updateStats();
+            animationId = requestAnimationFrame(simulate);
+        }
+
+        // Control functions
+        function startSimulation() {
+            if (isRunning) return;
+            
+            if (iteration === 0) {
+                initializeGrid();
+                ants = [];
+                for (let i = 0; i < NUM_ANTS; i++) {
+                    ants.push(new Ant());
+                }
+                bestPath = null;
+                bestPathLength = Infinity;
+                startTime = Date.now();
+            }
+
+            isRunning = true;
+            document.getElementById('statusIndicator').textContent = '🏃 Simulation Running...';
+            document.getElementById('statusIndicator').className = 'status-indicator status-running';
+            document.getElementById('startBtn').textContent = '⏸ Pause';
+            simulate();
+        }
+
+        function stopSimulation() {
+            isRunning = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            document.getElementById('startBtn').textContent = '▶ Resume';
+        }
+
+        function resetSimulation() {
+            stopSimulation();
+            iteration = 0;
+            startTime = null;
+            initializeGrid();
+            ants = [];
+            bestPath = null;
+            bestPathLength = Infinity;
+            virusPaths.clear();
+            draw();
+            updateStats();
+            document.getElementById('statusIndicator').textContent = 'Ready to start';
+            document.getElementById('statusIndicator').className = 'status-indicator';
+            document.getElementById('startBtn').textContent = '▶ Start Simulation';
+        }
+
+        // Event listeners
+        document.getElementById('antCount').addEventListener('input', (e) => {
+            NUM_ANTS = parseInt(e.target.value);
+            document.getElementById('antCountDisplay').textContent = NUM_ANTS;
+        });
+
+        document.getElementById('virusCount').addEventListener('input', (e) => {
+            NUM_VIRUSES = parseInt(e.target.value);
+            document.getElementById('virusCountDisplay').textContent = NUM_VIRUSES;
+        });
+
+        document.getElementById('gridSize').addEventListener('input', (e) => {
+            const wasRunning = isRunning;
+            if (wasRunning) {
+                stopSimulation();
+            }
+            
+            GRID_SIZE = parseInt(e.target.value);
+            CELL_SIZE = canvas.width / GRID_SIZE;
+            document.getElementById('gridSizeDisplay').textContent = `${GRID_SIZE}x${GRID_SIZE}`;
+            
+            // Auto-reset to apply new grid size
+            iteration = 0;
+            startTime = null;
+            initializeGrid();
+            ants = [];
+            bestPath = null;
+            bestPathLength = Infinity;
+            virusPaths.clear();
+            draw();
+            updateStats();
+            
+            if (!wasRunning) {
+                document.getElementById('statusIndicator').textContent = 'Grid resized - Ready to start';
+                document.getElementById('statusIndicator').className = 'status-indicator';
+                document.getElementById('startBtn').textContent = '▶ Start Simulation';
+            } else {
+                document.getElementById('statusIndicator').textContent = 'Grid resized - Click Start to resume';
+                document.getElementById('statusIndicator').className = 'status-indicator';
+                document.getElementById('startBtn').textContent = '▶ Start Simulation';
+            }
+        });
+
+        document.getElementById('speed').addEventListener('input', (e) => {
+            speedMultiplier = parseInt(e.target.value);
+            document.getElementById('speedDisplay').textContent = `${speedMultiplier}x`;
+        });
+
+        document.getElementById('evaporation').addEventListener('input', (e) => {
+            EVAPORATION_RATE = parseFloat(e.target.value);
+            document.getElementById('evaporationDisplay').textContent = EVAPORATION_RATE.toFixed(2);
+        });
+
+        document.getElementById('showPheromones').addEventListener('change', (e) => {
+            showPheromones = e.target.checked;
+            draw();
+        });
+
+        document.getElementById('showAnts').addEventListener('change', (e) => {
+            showAnts = e.target.checked;
+            draw();
+        });
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            if (isRunning) {
+                stopSimulation();
+            } else {
+                startSimulation();
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+
+        document.getElementById('fastForwardBtn').addEventListener('click', () => {
+            speedMultiplier = speedMultiplier === 1 ? 10 : 1;
+            document.getElementById('speed').value = speedMultiplier;
+            document.getElementById('speedDisplay').textContent = `${speedMultiplier}x`;
+        });
+
+        // Launch button - transition from intro to simulation
+        document.getElementById('launchBtn').addEventListener('click', () => {
+            document.getElementById('introPage').style.display = 'none';
+            document.getElementById('mainSimulation').style.display = 'block';
+            // Initialize after showing the simulation
+            setTimeout(() => {
+                initializeGrid();
+                draw();
+                updateStats();
+            }, 100);
+        });
+
+        // Initialize only if directly accessing simulation (no intro)
+        if (document.getElementById('introPage').style.display === 'none') {
+            initializeGrid();
+            draw();
+            updateStats();
+        }
+    </script>
+</body>
+</html>
